@@ -1,6 +1,8 @@
 using HowToAPI.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -21,8 +23,17 @@ namespace HowToAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var builder = new SqlConnectionStringBuilder
+            {
+                ConnectionString = Configuration.GetConnectionString("DefaultConnection"),
+                UserID = Configuration["UserID"],
+                Password = Configuration["Password"]
+            };
 
-            services.AddScoped<ICommandRepository, MockCommandRepository>();
+            services.AddDbContext<CommandDbContext>(options => 
+                options.UseSqlServer(builder.ConnectionString));
+
+            services.AddScoped<ICommandRepository, SqlCommandRepository>();
 
             services.AddControllers();
 
@@ -33,7 +44,7 @@ namespace HowToAPI
                 {
                     Version = "v1",
                     Title = "HowTo API",
-                    Description = "A simple example ASP.NET Core Web API",
+                    Description = "A simple How-To API",
                     TermsOfService = new Uri("https://example.com/terms"),
                     Contact = new OpenApiContact
                     {
