@@ -49,7 +49,7 @@ namespace HowToAPI.Data
         {
             return new Command
             {
-                Id = 0,
+                Id = 1,
                 HowTo = "How to generate a migration",
                 CommandLine = "dotnet ef migration add <Name of Migration>",
                 Platform = ".Net Core EF"
